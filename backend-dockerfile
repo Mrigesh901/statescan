@@ -1,0 +1,19 @@
+FROM node:lts-alpine
+
+ENV NODE_ENV production
+
+ARG BUILD_CONTEXT
+ARG PORT
+ENV BUILD_CONTEXT=${BUILD_CONTEXT}
+ENV PORT=${PORT}
+
+WORKDIR /base
+COPY package.json .
+COPY yarn.lock .
+
+COPY ./packages/ packages/
+RUN yarn install
+
+EXPOSE $PORT
+
+CMD node ./packages/$BUILD_CONTEXT/src/index.js

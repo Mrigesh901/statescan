@@ -1,0 +1,148 @@
+services:
+  # site:
+  #   build:
+  #     context: ./site
+  #     args:
+  #       - REACT_APP_PUBLIC_IDENTITY_SERVER_HOST=http://178.162.210.118:5011
+  #       - REACT_APP_PUBLIC_API_END_POINT=http://178.162.210.118:5010/
+  #       - REACT_APP_PUBLIC_GRAPHQL_API_END_POINT=http://178.162.210.118:7100/
+  #       - REACT_APP_PUBLIC_CHAIN=polkadot
+  #       - REACT_APP_DEFAULT_IPFS_GATEWAY=https://cloudflare-ipfs.com/ipfs/
+  #       - REACT_APP_PUBLIC_SIMPLE_MODE=true
+  #       - REACT_APP_BROWSER_ROUTER=1
+  #   ports:
+  #     - "80:80"
+  #   restart: always
+  mongo_db:
+    image: mongo:8.0.1
+    volumes: 
+      - ../mongo/data/db:/data/db
+    # ports:
+    #   - "27017:27017"
+    restart: always
+  scan:
+    build:
+      context: ./backend
+      dockerfile: scan.dockerfile
+    depends_on:
+      - mongo_db
+    restart: always
+  graphql-server:
+    build:
+      context: ./backend
+      args:
+        - BUILD_CONTEXT=graphql-server
+        - PORT=7100
+    environment:
+      - PORT=7100
+
+      - MONGO_VESTING_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_VESTING_SCAN_NAME=prod-statescan-polkadot-vesting-1
+
+      - MONGO_PALLET_ASSET_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_PALLET_ASSET_SCAN_NAME=prod-statescan-statemint-assets-1
+
+      - MONGO_MULTISIG_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_MULTISIG_SCAN_NAME=prod-statescan-polkadot-multisig-1
+
+      - MONGO_IDENTITY_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_IDENTITY_SCAN_NAME=prod-statescan-polkadot-identity
+
+      - MONGO_PALLET_RECOVERY_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_PALLET_RECOVERY_SCAN_NAME=prod-statescan-kusama-recovery-1
+
+      - MONGO_PROXY_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_PROXY_SCAN_NAME=prod-statescan-polkadot-proxy-1
+
+      - CHAIN=polkadot
+      - WS_ENDPOINTS=wss://abc.zeeve.net/rpc
+    ports:
+      - "7100:7100"
+    restart: always
+    depends_on:
+      - mongo_db
+  identity-server:
+    build:
+      context: ./backend
+      args:
+        - BUILD_CONTEXT=identity-server
+        - PORT=5011
+    environment:
+      - PORT=5011
+
+      - MONGO_IDENTITY_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_IDENTITY_SCAN_NAME=prod-statescan-polkadot-identity
+    ports:
+      - "5011:5011"
+    restart: always
+    depends_on:
+      - mongo_db
+  multisig-server:
+    build:
+      context: ./backend
+      args:
+        - BUILD_CONTEXT=multisig-server
+        - PORT=6011
+    environment:
+      - PORT=6011
+
+      - MONGO_MULTISIG_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_MULTISIG_SCAN_NAME=prod-statescan-polkadot-multisig
+    ports:
+      - "6011:6011"
+    restart: always
+    depends_on:
+      - mongo_db
+  # pallet-assets-server:
+  #   build:
+  #     context: ./backend
+  #     args:
+  #       - BUILD_CONTEXT=pallet-assets-server
+  #       - PORT=5100
+  #   environment:
+  #     - PORT=5100
+
+  #     - MONGO_PALLET_ASSET_SCAN_URL=mongodb://mongo_db:27017
+  #     - MONGO_PALLET_ASSET_SCAN_NAME=prod-statescan-statemint-assets
+  #   ports:
+  #     - "5100:5100"
+  #   depends_on:
+  #     - mongo_db
+  server:
+    build:
+      context: ./backend
+      args:
+        - BUILD_CONTEXT=server
+        - PORT=5010
+    environment:
+      - PORT=5010
+
+      - MONGO_BLOCK_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_BLOCK_SCAN_NAME=statescan-polkadot-block
+
+      - MONGO_ACCOUNT_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_ACCOUNT_SCAN_NAME=statescan-polkadot-account
+
+      # config only for chains with assets pallet
+      - MONGO_ASSET_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_ASSET_SCAN_NAME=statescan-polkadot-asset
+
+      # config only for chains with uniques pallet
+      - MONGO_UNIQUES_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_UNIQUES_SCAN_NAME=prod-statescan-statemine-uniques
+
+      - MONGO_RUNTIME_SCAN_URL=mongodb://mongo_db:27017
+      - MONGO_RUNTIME_SCAN_NAME=statescan-prod-polkadot-runtime
+
+      - ACHAINABLE_PROFILE_URL=https://label-production.graph.tdf-labs.io/v1/run/profiles/xxxxx
+      - ACHAINABLE_AUTHORIZATION_KEY=xxxxxx
+
+      # possible values: polkadot|kusama|statemine|statemint|westmint|litentry|litmus
+      - CHAIN=polkadot
+
+      - SIMPLE_MODE=1
+    ports:
+      - "5010:5010"
+    restart: always
+    depends_on:
+      - mongo_db

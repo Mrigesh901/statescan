@@ -1,0 +1,154 @@
+- name: account-scan
+  script: ./packages/account-scan/src/index.js
+  log_date_format: YYYY-MM-DD HH:mm Z
+  env_production:
+    WS_ENDPOINT: wss://abc.zeeve.net/rpc
+    CHAIN: polkadot
+
+    MONGO_ACCOUNT_SCAN_URL: mongodb://mongo_db:27017
+    MONGO_ACCOUNT_SCAN_NAME: statescan-polkadot-account
+
+    SCAN_STEP: 100
+
+    USE_META: 0
+    MONGO_META_URL: mongodb://mongo_db:27017
+    MONGO_DB_META_NAME: meta-polkadot
+
+    LOG_LEVEL: info
+    NODE_ENV: production
+- name: asset-scan
+  script: ./packages/asset-scan/src/index.js
+  log_date_format: YYYY-MM-DD HH:mm Z
+  max_memory_restart: 600M
+  env_production:
+    WS_ENDPOINT: wss://abc.zeeve.net/rpc
+    CHAIN: polkadot
+
+    MONGO_ASSET_SCAN_URL: mongodb://mongo_db:27017
+    MONGO_ASSET_SCAN_NAME: statescan-polkadot-asset
+
+    MONGO_BLOCK_SCAN_URL: mongodb://mongo_db:27017
+    MONGO_BLOCK_SCAN_NAME: statescan-polkadot-block
+
+    SCAN_STEP: 100
+
+    USE_META: 0
+    MONGO_META_URL: mongodb://mongo_db:27017
+    MONGO_DB_META_NAME: meta-polkadot
+
+    # If set, scan the known existed blocks first, then scan the next blocks one by one
+    USE_KNOWN_HEIGHTS: 1
+    MONGO_DB_KNOWN_HEIGHTS_URL: mongodb://mongo_db:27017
+    MONGO_DB_KNOWN_HEIGHTS_NAME: known-heights-statescan-statemint-asset
+
+    LOG_LEVEL: info
+    NODE_ENV: production
+
+    FOLLOW_BLOCK_SCAN: true
+- name: block-scan
+  script: ./packages/block-scan/src/index.js
+  log_date_format: YYYY-MM-DD HH:mm Z
+  env_production:
+    WS_ENDPOINT: wss://abc.zeeve.net/rpc
+    CHAIN: polkadot
+
+    MONGO_BLOCK_SCAN_URL: mongodb://mongo_db:27017
+    MONGO_BLOCK_SCAN_NAME: statescan-polkadot-block
+    SCAN_STEP: 100
+
+    USE_META: 0
+    MONGO_META_URL: mongodb://mongo_db:27017
+    MONGO_DB_META_NAME: meta-polkadot
+
+    SIMPLE_MODE: 1
+
+    LOG_LEVEL: info
+    NODE_ENV: production
+- name: identity-scan
+  script: ./packages/identity-scan/src/index.js
+  log_date_format: YYYY-MM-DD HH:mm Z
+  env_production:
+    WS_ENDPOINT: wss://abc.zeeve.net/rpc
+    CHAIN: polkadot
+
+    MONGO_IDENTITY_SCAN_URL: mongodb://mongo_db:27017
+    MONGO_IDENTITY_SCAN_NAME: prod-statescan-polkadot-identity
+
+    SCAN_STEP: 100
+
+    USE_META: 0
+    MONGO_META_URL: mongodb://mongo_db:27017
+    MONGO_DB_META_NAME: meta-polkadot
+
+    # If set, scan the known existed blocks first, then scan the next blocks one by one
+    USE_KNOWN_HEIGHTS: 1
+    MONGO_DB_KNOWN_HEIGHTS_URL: mongodb://mongo_db:27017
+    MONGO_DB_KNOWN_HEIGHTS_NAME: known-heights-statescan-polkadot-identity
+
+    LOG_LEVEL: info
+    NODE_ENV: production
+- name: multisig-scan
+  script: ./packages/multisig-scan/src/index.js
+  log_date_format: YYYY-MM-DD HH:mm Z
+  env_production:
+    WS_ENDPOINT: wss://abc.zeeve.net/rpc
+    CHAIN: polkadot
+
+    MONGO_MULTISIG_SCAN_URL: mongodb://mongo_db:27017
+    MONGO_MULTISIG_SCAN_NAME: prod-statescan-polkadot-multisig
+
+    SCAN_STEP: 100
+
+    USE_META: 0
+    MONGO_META_URL: mongodb://mongo_db:27017
+    MONGO_DB_META_NAME: meta-polkadot
+
+    # If set, scan the known existed blocks first, then scan the next blocks one by one
+    USE_KNOWN_HEIGHTS: 1
+    MONGO_DB_KNOWN_HEIGHTS_URL: mongodb://mongo_db:27017
+    MONGO_DB_KNOWN_HEIGHTS_NAME: known-heights-statescan-polkadot-multisig
+
+    LOG_LEVEL: info
+    NODE_ENV: production
+- name: pallet-proxy-scan
+  script: ./packages/pallet-proxy-scan/src/index.js
+  log_date_format: YYYY-MM-DD HH:mm Z
+  env_production:
+    WS_ENDPOINT: wss://abc.zeeve.net/rpc
+    CHAIN: polkadot
+
+    MONGO_PROXY_SCAN_URL: mongodb://mongo_db:27017
+    MONGO_PROXY_SCAN_NAME: prod-statescan-polkadot-proxy-1
+
+    SCAN_STEP: 100
+
+    USE_META: 0
+    MONGO_META_URL: mongodb://mongo_db:27017
+    MONGO_DB_META_NAME: meta-polkadot
+
+    # If set, scan the known existed blocks first, then scan the next blocks one by one
+    USE_KNOWN_HEIGHTS: 1
+    MONGO_DB_KNOWN_HEIGHTS_URL: mongodb://mongo_db:27017
+    MONGO_DB_KNOWN_HEIGHTS_NAME: known-heights-statescan-polkadot-proxy
+
+    LOG_LEVEL: info
+    NODE_ENV: production
+- name: runtime-scan
+  script: ./packages/runtime-scan/src/index.js
+  log_date_format: YYYY-MM-DD HH:mm Z
+  max_memory_restart: 600M
+  env_production:
+    WS_ENDPOINT: wss://abc.zeeve.net/rpc
+    CHAIN: polkadot
+
+    MONGO_RUNTIME_SCAN_URL: mongodb://mongo_db:27017
+    MONGO_RUNTIME_SCAN_NAME: statescan-prod-polkadot-runtime
+
+    SCAN_STEP: 100
+
+    USE_META: 0
+    MONGO_META_URL: mongodb://mongo_db:27017
+    MONGO_DB_META_NAME: meta-polkadot
+
+    LOG_LEVEL: info
+    NODE_ENV: production
